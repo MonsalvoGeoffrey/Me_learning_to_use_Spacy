@@ -11,3 +11,7 @@ with open("data/wiki_us.txt", "r") as f:
     doc = nlp(text)
 
 
+for ent in doc.ents:
+    print(ent.text, ent.label_)
+
+displacy.serve(doc, style="ent")
