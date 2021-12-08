@@ -1,4 +1,5 @@
 import spacy
+from spacy.matcher import Matcher
 import numpy as np
 from spacy import displacy
 
@@ -7,14 +8,10 @@ nlp = spacy.load("en_core_web_sm")
 #nlp = spacy.load("en_core_web_trf")
 
 
-ruler: spacy.pipeline.entityruler.EntityRuler = nlp.add_pipe("entity_ruler", before="ner")
+matcher: Matcher = Matcher(nlp.vocab)
 
-patterns = [
-    {"label": "GPE", "pattern": "West Chestertenfieldville"},
-    {"label": "FILM", "pattern": "Mr. Deeds"},
-]
-
-ruler.add_patterns(patterns)
+pattern = [{"LIKE_EMAIL": True}]
+matcher.add("EMAIL_ADDRESS", [pattern])
 
 doc = None
 
@@ -23,9 +20,7 @@ with open("data/wiki_us.txt", "r") as f:
 
     doc = nlp(text)
 
-
-text = "West Chestertenfieldville was referenced in Mr. Deeds."
-doc1 = nlp(text)
-
-for ent in doc1.ents:
-    print(ent.text, ent.label_)
+doc1 = nlp("This is my email address: example@example.com")
+matches = matcher(doc1)
+print(matches)
+print(nlp.vocab[matches[0][0]].text)
