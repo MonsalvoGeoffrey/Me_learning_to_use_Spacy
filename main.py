@@ -1,5 +1,6 @@
 import spacy
 from spacy.matcher import Matcher
+import json
 import numpy as np
 from spacy import displacy
 
@@ -10,7 +11,19 @@ nlp = spacy.load("en_core_web_sm")
 
 matcher: Matcher = Matcher(nlp.vocab)
 
-pattern = [{"POS": "PROPN", "OP": "+"}, {"POS": "VERB"}]
+speak_lemmas = ["think", "say"]
+pattern = [
+    {"ORTH": "'"},
+    {"IS_ALPHA": True, "OP":"+"},
+    {"IS_PUNCT": True, "OP":"*"},
+    {"ORTH": "'"},
+    {"POS": "VERB", "LEMMA": {"IN": speak_lemmas}},
+    {"POS": "PROPN", "OP": "+"},
+    {"ORTH": "'"},
+    {"IS_ALPHA": True, "OP":"+"},
+    {"IS_PUNCT": True, "OP":"*"},
+    {"ORTH": "'"}
+]
 matcher.add("PROPER_NOUN", [pattern], greedy="LONGEST")
 
 doc = None
@@ -25,11 +38,14 @@ with open("data/wiki_mlk.txt", "r") as f:
     doc1 = nlp(text)
 
 with open("data/alice.json", "r") as f:
-    text = f.read()
+    data = json.load(f)
+    text: str = data[0][2][0]
+    text = text.replace("`", "'")
+    print(text)
     doc2 = nlp(text)
 
-matches = matcher(doc1)
+matches = matcher(doc2)
 matches.sort(key= lambda x:  x[1])
 print(len(matches))
 for match in matches[:10]:
-    print(match, doc1[match[1]:match[2]])
+    print(match, doc2[match[1]:match[2]])
