@@ -10,8 +10,8 @@ nlp = spacy.load("en_core_web_sm")
 
 matcher: Matcher = Matcher(nlp.vocab)
 
-pattern = [{"POS": "PROPN"}]
-matcher.add("PROPER_NOUN", [pattern])
+pattern = [{"POS": "PROPN", "OP": "+"}]
+matcher.add("PROPER_NOUN", [pattern], greedy="LONGEST")
 
 doc = None
 doc1 = None
