@@ -12,19 +12,29 @@ nlp = spacy.load("en_core_web_sm")
 matcher: Matcher = Matcher(nlp.vocab)
 
 speak_lemmas = ["think", "say"]
-pattern = [
-    {"ORTH": "'"},
-    {"IS_ALPHA": True, "OP":"+"},
-    {"IS_PUNCT": True, "OP":"*"},
-    {"ORTH": "'"},
-    {"POS": "VERB", "LEMMA": {"IN": speak_lemmas}},
-    {"POS": "PROPN", "OP": "+"},
-    {"ORTH": "'"},
-    {"IS_ALPHA": True, "OP":"+"},
-    {"IS_PUNCT": True, "OP":"*"},
-    {"ORTH": "'"}
+patterns = [
+    [
+        {"ORTH": "'"},
+        {"IS_ALPHA": True, "OP": "+"},
+        {"IS_PUNCT": True, "OP": "*"},
+        {"ORTH": "'"},
+        {"POS": "VERB", "LEMMA": {"IN": speak_lemmas}},
+        {"POS": "PROPN", "OP": "+"},
+        {"ORTH": "'"},
+        {"IS_ALPHA": True, "OP": "+"},
+        {"IS_PUNCT": True, "OP": "*"},
+        {"ORTH": "'"}
+    ],
+    [
+        {"ORTH": "'"},
+        {"IS_ALPHA": True, "OP":"+"},
+        {"IS_PUNCT": True, "OP":"*"},
+        {"ORTH": "'"},
+        {"POS": "VERB", "LEMMA": {"IN": speak_lemmas}},
+        {"POS": "PROPN", "OP": "+"}
+    ]
 ]
-matcher.add("PROPER_NOUN", [pattern], greedy="LONGEST")
+matcher.add("PROPER_NOUN", patterns, greedy="LONGEST")
 
 doc = None
 doc1 = None
@@ -49,3 +59,12 @@ matches.sort(key= lambda x:  x[1])
 print(len(matches))
 for match in matches[:10]:
     print(match, doc2[match[1]:match[2]])
+
+for text in data[0][2]:
+    text = text.replace("`", "'")
+    docX = nlp(text)
+    matches = matcher(docX)
+    print(len(matches))
+    matches.sort(key=lambda x: x[1])
+    for match in matches[:10]:
+        print(match, docX[match[1]:match[2]])
