@@ -9,11 +9,10 @@ nlp = spacy.load("en_core_web_sm")
 #nlp = spacy.load("en_core_web_trf")
 
 
-matcher: Matcher = Matcher(nlp.vocab)
+ruler: spacy.pipeline.entityruler.EntityRuler = nlp.add_pipe("entity_ruler", before="ner")
 
 speak_lemmas = ["think", "say"]
 patterns = [
-    [
         {"ORTH": "'"},
         {"IS_ALPHA": True, "OP": "+"},
         {"IS_PUNCT": True, "OP": "*"},
@@ -24,17 +23,9 @@ patterns = [
         {"IS_ALPHA": True, "OP": "+"},
         {"IS_PUNCT": True, "OP": "*"},
         {"ORTH": "'"}
-    ],
-    [
-        {"ORTH": "'"},
-        {"IS_ALPHA": True, "OP":"+"},
-        {"IS_PUNCT": True, "OP":"*"},
-        {"ORTH": "'"},
-        {"POS": "VERB", "LEMMA": {"IN": speak_lemmas}},
-        {"POS": "PROPN", "OP": "+"}
     ]
-]
-matcher.add("PROPER_NOUN", patterns, greedy="LONGEST")
+#matcher.add("PROPER_NOUN", patterns, greedy="LONGEST")
+ruler.add_patterns([{"label": "MY_ENTITY", "pattern": patterns}])
 
 doc = None
 doc1 = None
@@ -54,17 +45,4 @@ with open("data/alice.json", "r") as f:
     print(text)
     doc2 = nlp(text)
 
-matches = matcher(doc2)
-matches.sort(key= lambda x:  x[1])
-print(len(matches))
-for match in matches[:10]:
-    print(match, doc2[match[1]:match[2]])
-
-for text in data[0][2]:
-    text = text.replace("`", "'")
-    docX = nlp(text)
-    matches = matcher(docX)
-    print(len(matches))
-    matches.sort(key=lambda x: x[1])
-    for match in matches[:10]:
-        print(match, docX[match[1]:match[2]])
+displacy.serve(doc2, style="ent")
