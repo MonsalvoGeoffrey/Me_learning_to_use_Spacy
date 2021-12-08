@@ -1,4 +1,5 @@
 import spacy
+from spacy import displacy
 
 nlp = spacy.load("en_core_web_sm")
 
@@ -31,3 +32,11 @@ print(sentence[12].pos_)
 print(token3.dep_)
 print(sentence[12].dep_)
 print(token3.lang_)
+
+text = "Mike enjoys playing football."
+doc2 = nlp(text)
+
+for token in doc2:
+    print(token.text, token.pos_, token.dep_)
+
+displacy.serve(sentence, style="dep")
