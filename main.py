@@ -10,8 +10,8 @@ nlp = spacy.load("en_core_web_sm")
 
 matcher: Matcher = Matcher(nlp.vocab)
 
-pattern = [{"LIKE_EMAIL": True}]
-matcher.add("EMAIL_ADDRESS", [pattern])
+pattern = [{"POS": "PROPN"}]
+matcher.add("PROPER_NOUN", [pattern])
 
 doc = None
 doc1 = None
@@ -24,7 +24,8 @@ with open("data/wiki_mlk.txt", "r") as f:
     text = f.read()
     doc1 = nlp(text)
 
-doc2 = nlp("This is my email address: example@example.com")
-matches = matcher(doc2)
-print(matches)
-print(nlp.vocab[matches[0][0]].text)
+
+matches = matcher(doc1)
+print(len(matches))
+for match in matches[:10]:
+    print(match, doc1[match[1]:match[2]])
