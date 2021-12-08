@@ -1,7 +1,10 @@
 import spacy
+import numpy as np
 from spacy import displacy
 
-nlp = spacy.load("en_core_web_sm")
+#nlp = spacy.load("en_core_web_sm")
+nlp = spacy.load("en_core_web_md")
+#nlp = spacy.load("en_core_web_trf")
 
 doc = None
 
@@ -11,7 +14,11 @@ with open("data/wiki_us.txt", "r") as f:
     doc = nlp(text)
 
 
-for ent in doc.ents:
-    print(ent.text, ent.label_)
+setence = list(doc.sents)[0]
 
-displacy.serve(doc, style="ent")
+my_word = "country"
+
+ms = nlp.vocab.vectors.most_similar(np.asarray([nlp.vocab.vectors[nlp.vocab.strings[my_word]]]), n = 10)
+words = [nlp.vocab.strings[w] for w in ms[0][0]]
+
+print(words)
