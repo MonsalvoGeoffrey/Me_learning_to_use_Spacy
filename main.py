@@ -26,6 +26,7 @@ with open("data/wiki_mlk.txt", "r") as f:
 
 
 matches = matcher(doc1)
+matches.sort(key= lambda x:  x[1])
 print(len(matches))
 for match in matches[:10]:
     print(match, doc1[match[1]:match[2]])
