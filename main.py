@@ -24,6 +24,9 @@ with open("data/wiki_mlk.txt", "r") as f:
     text = f.read()
     doc1 = nlp(text)
 
+with open("data/alice.json", "r") as f:
+    text = f.read()
+    doc2 = nlp(text)
 
 matches = matcher(doc1)
 matches.sort(key= lambda x:  x[1])
