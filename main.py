@@ -30,3 +30,5 @@ doc1 = nlp("Britain is a place. January is a doctor.")
 
 for ent in doc1.ents:
     print(ent.text, ent.label_)
+
+print("test")
